@@ -4,7 +4,7 @@ Small, single-purpose Python tools written from scratch while learning offensive
 
 These are learning tools, not a framework. Each script does one thing, reads its arguments from the command line, and leans on the Python standard library alone — except the web scripts, which use `requests` and `beautifulsoup4`. Comments and output are in French.
 
-They were built along a structured Python-for-security track, one block at a time: bytes and files, encoding and HMAC, process execution, sockets, and HTTP.
+They were built along a structured Python-for-security track, one block at a time: bytes and files, encoding and HMAC, process execution, sockets, HTTP, and concurrency.
 
 ## Requirements
 
@@ -52,6 +52,15 @@ They were built along a structured Python-for-security track, one block at a tim
 | `extract.py` | Fetches a page and lists its title and every link (BeautifulSoup). | `python extract.py <url>` |
 | `extract_forms.py` | Fetches a page and enumerates its forms — action, method, and each input. | `python extract_forms.py <url>` |
 | `fuzz.py` | Tries a small wordlist of paths against a base URL and reports the status of each. | `python fuzz.py <base_url>` |
+
+## Concurrency
+
+The sequential scripts spend almost all their time waiting on the network. These versions run that waiting in parallel with a thread pool (`concurrent.futures.ThreadPoolExecutor`), turning minutes into seconds. Each worker is kept isolated so a single failed request cannot abort the whole run.
+
+| Script | What it does | Usage |
+|---|---|---|
+| `scan_pool.py` | Concurrent port scan over ports 20–100 — the same check as `scan.py`, run across a thread pool. | `python scan_pool.py <ip>` |
+| `fuzz_pool.py` | Concurrent version of `fuzz.py`; each worker returns a named result and handles its own network error. | `python fuzz_pool.py <base_url>` |
 
 ## A note on use
 
