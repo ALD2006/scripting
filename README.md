@@ -4,12 +4,13 @@ Small, single-purpose Python tools written from scratch while learning offensive
 
 These are learning tools, not a framework. Each script does one thing, reads its arguments from the command line, and leans on the Python standard library alone — except the web scripts, which use `requests` and `beautifulsoup4`. Comments and output are in French.
 
-They were built along a structured Python-for-security track, one block at a time: bytes and files, encoding and HMAC, process execution, sockets, HTTP, and concurrency.
+They were built along a structured Python-for-security track, one block at a time: bytes and files, encoding and HMAC, process execution, sockets, HTTP, and concurrency — with a short Bash module alongside, written to the same standard.
 
 ## Requirements
 
 - Python 3.10+
 - For the web scripts only: `pip install -r requirements.txt`
+- For the Bash scripts: a Bash shell (Git Bash on Windows). The port scanner relies on Bash's built-in `/dev/tcp`.
 
 ## Foundations — bytes & files
 
@@ -61,6 +62,16 @@ The sequential scripts spend almost all their time waiting on the network. These
 |---|---|---|
 | `scan_pool.py` | Concurrent port scan over ports 20–100 — the same check as `scan.py`, run across a thread pool. | `python scan_pool.py <ip>` |
 | `fuzz_pool.py` | Concurrent version of `fuzz.py`; each worker returns a named result and handles its own network error. | `python fuzz_pool.py <base_url>` |
+
+## Shell — Bash
+
+A small, self-contained Bash module written to the same standard as the Python tools: strict mode (`set -euo pipefail`), quoted variables throughout, functions, option parsing with `getopts`, and guaranteed cleanup with `trap`. The port scanner uses Bash's own `/dev/tcp`, with no external binary.
+
+| Script | What it does | Usage |
+|---|---|---|
+| `sysinfo.sh` | Local host summary — hostname, kernel, current user, a root check, open sessions, and the readability of a few sensitive files. | `bash sysinfo.sh` |
+| `portcheck.sh` | TCP connect scan in pure Bash through `/dev/tcp`, with named options and a per-port timeout. | `bash portcheck.sh -t <host> -p "<port...>"` |
+| `failban.sh` | Reads an auth log and ranks the IP addresses with the most failed SSH logins above a threshold. A sample `auth.log` is included. | `bash failban.sh [logfile] [threshold]` |
 
 ## A note on use
 
