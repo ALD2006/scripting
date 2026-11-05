@@ -65,13 +65,14 @@ The sequential scripts spend almost all their time waiting on the network. These
 
 ## Shell — Bash
 
-A small, self-contained Bash module written to the same standard as the Python tools: strict mode (`set -euo pipefail`), quoted variables throughout, functions, option parsing with `getopts`, and guaranteed cleanup with `trap`. The port scanner uses Bash's own `/dev/tcp`, with no external binary.
+A small, self-contained Bash module written to the same standard as the Python tools: strict mode (`set -euo pipefail`), quoted variables throughout, functions, option parsing with `getopts`, and guaranteed cleanup with `trap`. The port scanner uses Bash's own `/dev/tcp`, with no external binary. A capstone script, `enum.sh`, assembles the individual checks behind one command-line interface with selectable modules.
 
 | Script | What it does | Usage |
 |---|---|---|
 | `sysinfo.sh` | Local host summary — hostname, kernel, current user, a root check, open sessions, and the readability of a few sensitive files. | `bash sysinfo.sh` |
 | `portcheck.sh` | TCP connect scan in pure Bash through `/dev/tcp`, with named options and a per-port timeout. | `bash portcheck.sh -t <host> -p "<port...>"` |
 | `failban.sh` | Reads an auth log and ranks the IP addresses with the most failed SSH logins above a threshold. A sample `auth.log` is included. | `bash failban.sh [logfile] [threshold]` |
+| `enum.sh` | Capstone enumerator. Runs any combination of the system summary, a privilege-escalation surface check (unexpected SUID binaries, writable cron paths), and the `/dev/tcp` port scan, each selected by option, behind a single `main`/`getopts` dispatcher. | `bash enum.sh -s -u` or `bash enum.sh -a` |
 
 ## A note on use
 
